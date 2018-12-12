@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+    <form method="POST">
+        {% csrf_token %} {{ form.as_p }}
+        
+        <!--Any messages from backend will be displayed here-->
+        {% if messages %}
+        <ul class="messages">
+
+        {% for message in messages %}
+            <li class="{{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+        </ul>
+        {% endif %}
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>
