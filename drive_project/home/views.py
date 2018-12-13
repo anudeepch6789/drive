@@ -7,6 +7,8 @@ from .models import userinfo
 from django.contrib.auth.hashers import make_password
 from django.core.validators import validate_email
 from django.contrib import messages
+from django.core.mail import send_mail
+
 
 
 '''testing purpose'''
@@ -24,7 +26,11 @@ def signup(request):
     if request.method == 'POST':
         #print("hello form is submitted")
 
+
+
         form = UserRegistrationForm(request.POST)
+
+        all_user = userinfo.objects.all()
 
         '''checking whether form is valid or not'''
 
@@ -51,6 +57,17 @@ def signup(request):
                 #return HttpResponse("<h2>enter valid email address</h2>")
             '''if email contains '@' '''
 
+            '''checking whether username is already taken or not'''
+
+            for usercheck in all_user:
+
+                if usercheck.username == form.cleaned_data["username"] :
+
+                    messages.warning(request, 'please chose another username as this username is already exist.')  
+                    form = UserRegistrationForm()
+                    return render(request, 'home/signup.html', {'form' : form})
+                
+
             '''storing the data in table'''
 
             username=form.cleaned_data["username"]
@@ -63,6 +80,8 @@ def signup(request):
             '''saving the data in the table'''
 
             a.save()
+            send_mail("Drive Registration","Thanks for registering to our drive account" , "anudeepch528@gmail.com",[a.email])
+
             #print(a.username)
 
             '''rendering to a pages says user is registered'''
